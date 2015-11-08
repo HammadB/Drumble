@@ -21,8 +21,8 @@ function dataURItoBlob(dataURI) {
 
 var game = {
     polygons: [
-                 [[0, 0], [80, 0], [80, 80], [0, 80]],
-                 [[0, 320], [80, 320], [0, 240], [80, 240]],
+                 [[0, 0], [80, 0], [80, 80], [0, 80]], // Points should start top-left
+                 [[0, 320], [80, 320], [0, 240], [80, 240]], // and counter-clockwise
                  [[420, 320], [340, 320], [420, 240], [340, 240]],
                  [[420, 0], [420, 80], [340, 0], [340, 80]],
                  [[80, 0], [160, 0], [80, 80], [160, 80]]
@@ -52,7 +52,14 @@ var game = {
                     color: "blue",
                     polygon: 3
                 }
-          ]
+          ],
+    polygonAudioMap: { 
+                        0:'sounds/hihat-acoustic01.mp3',
+                        1:'sounds/tom-acoustic02.mp3',
+                        2:'sounds/kick-acoustic02.mp3',
+                        3:'sounds/snare-acoustic02.mp3',
+                        4:'sounds/cowbell-808.mp3'
+                     } 
 };
 
 var game_state = {};
@@ -67,6 +74,18 @@ function resetGamestate() {
 }
 
 resetGamestate();
+
+function playAudioExample(game) {
+    var curr;
+    for (var i = 0; i < game.moves.length;i++){
+        curr = game.moves;
+        var sound = new Audio(game.polygonAudioMap[curr[i].polygon]);
+        setTimeout(function(){
+            sound.play;
+            //TODO: animateBox()
+        }, curr[i].time);
+    }
+}
 
 var socket = io({"transports": ["websocket"]});
 
@@ -108,7 +127,7 @@ socket.on("sound", function(hit) {
 
     switch (soundID) {
         case 0:
-            var sound = new Audio('sounds/hihat-acoustic01.mp3');
+            var sound = new audio('sounds/hihat-acoustic01.mp3');
             break;
         case 1:
             var sound = new Audio('sounds/tom-acoustic02.mp3');
@@ -159,6 +178,37 @@ var backcontext = back.getContext('2d');
 
 var cw,ch;
 
+var toDraw = [];
+
+/** Sets up the toDraw. Takes the game var. */
+function setupToDraw(game) {
+    for (var index in game.polygons) {
+        polygon = game.polygons[index];
+        toDraw.push(
+                {
+                    polygon: polygon,
+                    color: "red",
+                    stroke: 2,
+                    time: 0
+                }
+        );
+    }
+}
+
+setupToDraw(game);
+
+/** Blinks the rectangle, give it a polygon (array of four [x, y] points) and a string of color */
+var blinkRectangle(polygon, color) {
+    toDraw.push(
+            {
+                polygon: polygon,
+                color: color,
+                stroke: 3,
+                time: 500
+            }
+    );
+}
+
 //setting it and intermediate canvas to same frame size
 cw = video.clientWidth;
 console.log(cw)
@@ -171,6 +221,7 @@ back.width = cw;
 back.height = ch;
 
 draw(video,displayContext,backcontext,cw,ch);
+
 
 // “backing canvas”, which performs any intermediate operations 
 // before painting the final result into the visible canvas in the markup. 
@@ -186,10 +237,19 @@ function draw(v,c,bc,w,h) {
     c.putImageData(idata,0,0);
     // keep drawing while video plays
     setTimeout(function(){ 
-        draw(v,c,bc,w,h);
-        //example
-        drawRectangle([0,0], [0, 50], [50, 50], [50, 0], "red", displayContext, 2);
-    }, 0);
+        draw(v,c,bc,w,h); 
+        for (var index in toDraw) {
+            var elem = toDraw[index];
+            drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
+                elem.color, elem.stroke);
+            if (elem.time == 1) {
+                toDraw.splice(index, 1);
+            }
+            if (elem.time > 0) {
+                elem.time -= 1;
+            }
+        }
+    }, 1);
 }
 
 /*
