@@ -30,7 +30,6 @@ i = 0
 @socketio.on('frame')
 def handle_frame(frame_data):
     global i
-    print "frame"
     decoded = np.asarray(bytearray(frame_data), dtype='uint8')
     img = cv2.imdecode(decoded, flags=cv2.CV_LOAD_IMAGE_COLOR)
     img = cv2.flip(img, 1)
@@ -52,7 +51,6 @@ def handle_frame(frame_data):
 @socketio.on('new_game')
 def handle_new_game(polygons):
     # TODO: Handle the polygons
-    print polygons
     global currPolygons
     currPolygons = polygons
 

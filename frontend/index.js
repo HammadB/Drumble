@@ -142,7 +142,7 @@ socket.on("sound", function(hit) {
 
     switch (soundID) {
         case 0:
-            var sound = new audio('../sounds/hihat-acoustic01.mp3');
+            var sound = new Audio('../sounds/hihat-acoustic01.mp3');
             break;
         case 1:
             var sound = new Audio('../sounds/tom-acoustic02.mp3');
@@ -159,7 +159,7 @@ socket.on("sound", function(hit) {
     }
     sound.play();
 
-    blinkRectangle(game, soundID, color);
+    blinkRectangle(game, flipPolygonIndexes(soundID), color);
 
     var current_move = game.moves[game_state.current_pos];
 
@@ -227,6 +227,27 @@ function blinkRectangle(game, id, color) {
     );
 }
 
+//dont judge me for how i did this
+function flipPolygonIndexes(index) {
+    switch (index) {
+        case 0:
+            return 4;
+            break;
+        case 1:
+            return 3;
+            break;
+        case 2:
+            return 2;
+            break;
+        case 3:
+            return 1;
+            break;
+        case 4:
+            return 0;
+            break;
+    }
+}
+
 //setting it and intermediate canvas to same frame size
 
 cw = 320 *2;
@@ -256,13 +277,16 @@ function draw(v,c,bc,w,h) {
         draw(v,c,bc,w,h); 
         for (var index in toDraw) { //starts at 0
             var elem = toDraw[index];
-            drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
-                elem.color, c, elem.stroke);
-            if (elem.time == 1) {
-                toDraw.splice(index, 1);
-            }
             if (elem.time > 0) {
                 elem.time -= 1;
+                drawFilledRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
+                elem.color, c);
+            } else {
+                drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
+                    elem.color, c, elem.stroke);
+            }
+            if (elem.time == 1) {
+                toDraw.splice(index, 1);
             }
         }
     }, 0);
@@ -279,6 +303,14 @@ function drawRectangle(point1, point2, point3, point4, color, ctx, stroke) {
     ctx.lineWidth = stroke;
     ctx.strokeStyle = color;
     ctx.rect(2*point1[0], 2*point1[1], 2*Math.abs(point4[0]-point1[0]), 2*Math.abs(point1[1] - point2[1])); 
+    ctx.stroke();
+}
+
+function drawFilledRectangle(point1, point2, point3, point4, color, ctx) {
+    ctx.beginPath();
+    ctx.globalAlpha = 0.6;
+    ctx.fillStyle = color;
+    ctx.fillRect(2*point1[0], 2*point1[1], 2*Math.abs(point4[0]-point1[0]), 2*Math.abs(point1[1] - point2[1])); 
     ctx.stroke();
 }
 
