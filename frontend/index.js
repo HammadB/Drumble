@@ -28,8 +28,8 @@ var sound4 = new Audio('../sounds/cowbell-808.mp3');
 
 var game = {
     polygons: [
-                 [[0, 0], [80, 0], [80, 80], [0, 80]],
-                 [[0, 320], [80, 320], [0, 240], [80, 240]],
+                 [[0, 0], [80, 0], [80, 80], [0, 80]], // Points should start top-left
+                 [[0, 320], [80, 320], [0, 240], [80, 240]], // and counter-clockwise
                  [[420, 320], [340, 320], [420, 240], [340, 240]],
                  [[420, 0], [420, 80], [340, 0], [340, 80]],
                  [[80, 0], [160, 0], [80, 80], [160, 80]]
@@ -192,12 +192,40 @@ var backcontext = back.getContext('2d');
 
 var cw,ch;
 
+var toDraw = [];
+
+/** Sets up the toDraw. Takes the game var. */
+function setupToDraw(game) {
+    for (var index in game.polygons) {
+        polygon = game.polygons[index];
+        toDraw.push(
+                {
+                    polygon: polygon,
+                    color: "red",
+                    stroke: 2,
+                    time: 0
+                }
+        );
+    }
+}
+
+setupToDraw(game);
+
+/** Blinks the rectangle, give it a polygon (array of four [x, y] points) and a string of color */
+function blinkRectangle(polygon, color) {
+    toDraw.push(
+            {
+                polygon: polygon,
+                color: color,
+                stroke: 3,
+                time: 500
+            }
+    );
+}
+
 //setting it and intermediate canvas to same frame size
 cw = video.clientWidth;
-console.log(cw)
 ch = video.clientHeight;
-console.log(ch)
-console.log(video)
 display.width = cw;
 display.height = ch;
 back.width = cw;
@@ -205,24 +233,34 @@ back.height = ch;
 
 draw(video,displayContext,backcontext,cw,ch);
 
+
 // “backing canvas”, which performs any intermediate operations 
 // before painting the final result into the visible canvas in the markup. 
 function draw(v,c,bc,w,h) {
-// First, draw it into the backing canvas
-bc.drawImage(v,0,0,w,h);
-// Grab the pixel data from the backing canvas
-var idata = bc.getImageData(0,0,w,h);
+    // First, draw it into the backing canvas
+    bc.drawImage(v,0,0,w,h);
+    // Grab the pixel data from the backing canvas
+    var idata = bc.getImageData(0,0,w,h);
 
-// any image manipulations here
+    // any image manipulations here
 
-// Draw the pixels onto the visible canvas
-c.putImageData(idata,0,0);
-// keep drawing while video plays
-setTimeout(function(){ 
-    draw(v,c,bc,w,h); 
-    //example
-    drawRectangle([0,0], [0, 50], [50, 50], [50, 0], "red", displayContext, 2);
-}, 0);
+    // Draw the pixels onto the visible canvas
+    c.putImageData(idata,0,0);
+    // keep drawing while video plays
+    setTimeout(function(){ 
+        draw(v,c,bc,w,h); 
+        for (var index in toDraw) {
+            var elem = toDraw[index];
+            drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
+                elem.color, elem.stroke);
+            if (elem.time == 1) {
+                toDraw.splice(index, 1);
+            }
+            if (elem.time > 0) {
+                elem.time -= 1;
+            }
+        }
+    }, 1);
 }
 
 /*
