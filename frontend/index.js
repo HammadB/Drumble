@@ -22,9 +22,9 @@ function dataURItoBlob(dataURI) {
 var game = {
     polygons: [
                  [[0, 0], [0, 64], [64, 64], [64, 0]],
-                 [[64, 192], [128, 192], [128, 239], [64, 239]],
-                 [[128, 192], [192, 192], [192, 239], [128, 239]],
-                 [[192, 192], [256, 192], [256, 239], [192, 239]],
+                 [[64, 192], [64, 239], [128, 239], [128, 192]],
+                 [[128, 192], [128, 239], [192, 239], [192, 192]],
+                 [[192, 192], [192, 239], [256, 239], [256, 192]],
                  [[256, 0], [256, 64], [320, 64], [320, 0]]
               ],
 
@@ -104,8 +104,8 @@ var errorCallback = function(e) {
 var videoConstraints = {
   video: {
     mandatory: {
-      minWidth: 640,
-      minHeight: 480
+      minWidth: 320,
+      minHeight: 240
     }
   }
 };
@@ -210,8 +210,8 @@ function blinkRectangle(polygon, color) {
 }
 
 //setting it and intermediate canvas to same frame size
-cw = video.clientWidth;
-ch = video.clientHeight;
+cw = 320;
+ch = 240;
 display.width = cw;
 display.height = ch;
 back.width = cw;
@@ -235,10 +235,11 @@ function draw(v,c,bc,w,h) {
     // keep drawing while video plays
     setTimeout(function(){ 
         draw(v,c,bc,w,h); 
+
         for (var index in toDraw) {
             var elem = toDraw[index];
             drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
-                elem.color, elem.stroke);
+                elem.color, c, elem.stroke);
             if (elem.time == 1) {
                 toDraw.splice(index, 1);
             }
@@ -246,7 +247,7 @@ function draw(v,c,bc,w,h) {
                 elem.time -= 1;
             }
         }
-    }, 1);
+    }, 0);
 }
 
 /*

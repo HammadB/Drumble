@@ -37,8 +37,8 @@ def handle_frame(frame_data):
     frame, res, hit, hit2 = theBig(img, 0, True, currPolygons)
     if hit != None:
         print hit
-        # import random
-        # cv2.imwrite(str(random.random()) + ".jpg", img)
+        import random
+        cv2.imwrite(str(random.random()) + ".jpg", img)
         payload = {"soundID" : hit, "color" : "blue"}
         flask_socketio.emit('sound', payload)
     if hit2 != None:
