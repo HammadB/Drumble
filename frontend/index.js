@@ -175,21 +175,21 @@ draw(video,displayContext,backcontext,cw,ch);
 // “backing canvas”, which performs any intermediate operations 
 // before painting the final result into the visible canvas in the markup. 
 function draw(v,c,bc,w,h) {
-// First, draw it into the backing canvas
-bc.drawImage(v,0,0,w,h);
-// Grab the pixel data from the backing canvas
-var idata = bc.getImageData(0,0,w,h);
+    // First, draw it into the backing canvas
+    bc.drawImage(v,0,0,w,h);
+    // Grab the pixel data from the backing canvas
+    var idata = bc.getImageData(0,0,w,h);
 
-// any image manipulations here
+    // any image manipulations here
 
-// Draw the pixels onto the visible canvas
-c.putImageData(idata,0,0);
-// keep drawing while video plays
-setTimeout(function(){ 
-    draw(v,c,bc,w,h); 
-    //example
-    drawRectangle([0,0], [0, 50], [50, 50], [50, 0], "red", displayContext, 2);
-}, 0);
+    // Draw the pixels onto the visible canvas
+    c.putImageData(idata,0,0);
+    // keep drawing while video plays
+    setTimeout(function(){ 
+        draw(v,c,bc,w,h);
+        //example
+        drawRectangle([0,0], [0, 50], [50, 50], [50, 0], "red", displayContext, 2);
+    }, 0);
 }
 
 /*
