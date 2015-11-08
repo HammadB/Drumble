@@ -64,7 +64,7 @@ def point_inside_polygon(x, y, poly):
 
     return inside
 
-def theBig(frame, currCountour, drawBoundingBox):
+def theBig(frame, currCountour, drawBoundingBox, drumRegionPolygons=None):
     height, width, _ = frame.shape
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -90,13 +90,8 @@ def theBig(frame, currCountour, drawBoundingBox):
         countoursPink = [countoursPink[currCountour]]
     cv2.drawContours(frame, countoursPink, -1, (255,0,255))
 
-    drumRegionStart, verticals = getDrumRegion(height, width)
-
-    # cv2.line(frame, (0, drumRegionStart), (width - 1, drumRegionStart), (255, 0, 0))
-    # for vertical in verticals:
-    #     cv2.line(frame, (vertical, drumRegionStart), (vertical, height - 1), (255, 0, 0))
-
-    drumRegionPolygons = getDrumRegionPolygons(height, width)
+    if not drumRegionPolygons:
+        drumRegionPolygons = getDrumRegionPolygons(height, width)
     for polygon in drumRegionPolygons:
         pts = np.int0(polygon)
         cv2.polylines(frame, [pts], True, (0, 150, 0))
@@ -116,13 +111,15 @@ def theBig(frame, currCountour, drawBoundingBox):
             for point in pts:
                 if point_inside_polygon(point[0], point[1], polygon):
                     numPoints += 1
-            if not minNumPoints:
+            if not minNumPoints or numPoints > minNumPoints:
                 hitPoly = polygon
                 minNumPoints = numPoints
                 hitPolyIndex = i
         if minNumPoints:
             polyPts = np.int0(hitPoly)
             cv2.polylines(frame, [polyPts], True, (0, 0, 255), 40)
+        else:
+            hitPolyIndex = None
 
         cv2.polylines(frame, [pts], True, (0, 0, 255))
 
@@ -141,14 +138,16 @@ def theBig(frame, currCountour, drawBoundingBox):
             for point in pts:
                 if point_inside_polygon(point[0], point[1], polygon):
                     numPoints += 1
-            if not minNumPoints:
+            if not minNumPoints or numPoints > minNumPoints:
                 hitPoly = polygon
                 minNumPoints = numPoints
                 pinkHitPolyIndex = i
         if minNumPoints:
             polyPts = np.int0(hitPoly)
             cv2.polylines(frame, [polyPts], True, (255, 0, 255), 40)
-      
+        else:
+            pinkHitPolyIndex = None
+ 
         cv2.polylines(frame, [pts], True, (0, 0, 255))
 
     return frame, res, hitPolyIndex, pinkHitPolyIndex
