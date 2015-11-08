@@ -80,10 +80,13 @@ setInterval(function() {
         socket.emit("frame", dataURItoBlob(data));
     }, 230);
 
-socket.on("sound", function(soundID) {
+socket.on("sound", function(hit) {
+    var timecode = new Date().getTime();
+    var soundID = hit.soundID;
+    var color = hit.color;
+
     switch (soundID) {
         case 0:
-            console.log('fak');
             var sound = new Audio('sounds/hihat-acoustic01.mp3');
             break;
         case 1:
@@ -101,6 +104,29 @@ socket.on("sound", function(soundID) {
 
     }
     sound.play();
+
+    var current_move = game.moves[game_state.current_pos];
+
+    if ((current_move.color == color) && (current_move.polygon = soundID)) {
+        if (game_state.current_pos > 0) {
+            var diff = Math.abs(timecode - game_state.last_time);
+            if ((.1 * current_move.time) > diff) {
+                game_state.current_score += 1000;
+            } else if ((.25 * current_move.time) > diff) {
+                game_state.current_score += 500;
+            } else if ((.5 * current_move.time) > diff) {
+                game_state.current_score += 250;
+            } else if (current_move.time > diff) {
+                game_state.current_score += 150;
+            } else {
+                game_state.current_score += 100;
+            }
+        }
+        game_state.last_time = new Date().getTime();
+        game_state.current_pos += 1;
+    }
+
+
 });
 
 $('.btn').click(function(e) {
