@@ -198,7 +198,7 @@ function setupToDraw(game) {
 setupToDraw(game);
 
 /** Blinks the rectangle, give it a polygon (array of four [x, y] points) and a string of color */
-var blinkRectangle(polygon, color) {
+function blinkRectangle(polygon, color) {
     toDraw.push(
             {
                 polygon: polygon,
@@ -211,10 +211,7 @@ var blinkRectangle(polygon, color) {
 
 //setting it and intermediate canvas to same frame size
 cw = video.clientWidth;
-console.log(cw)
 ch = video.clientHeight;
-console.log(ch)
-console.log(video)
 display.width = cw;
 display.height = ch;
 back.width = cw;
