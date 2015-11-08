@@ -19,6 +19,13 @@ function dataURItoBlob(dataURI) {
     return new Blob([ia], {type:mimeString});
 }
 
+
+var sound0 = new Audio('../sounds/hihat-acoustic01.mp3');
+var sound1 = new Audio('../sounds/tom-acoustic02.mp3');
+var sound2 = new Audio('../sounds/kick-acoustic02.mp3');
+var sound3 = new Audio('../sounds/snare-acoustic02.mp3');
+var sound4 = new Audio('../sounds/cowbell-808.mp3');
+
 var game = {
     polygons: [
                  [[0, 0], [0, 64], [64, 64], [64, 0]],
@@ -36,29 +43,29 @@ var game = {
                 },
 
                 {
-                    time: 2000,
+                    time: 200,
                     color: "purple",
                     polygon: 4
                 },
 
                 {
-                    time: 3000,
+                    time: 300,
                     color: "blue",
                     polygon: 2
                 },
 
                 {
-                    time: 1000,
+                    time: 100,
                     color: "blue",
                     polygon: 3
                 }
           ],
     polygonAudioMap: { 
-                        0:'sounds/hihat-acoustic01.mp3',
-                        1:'sounds/tom-acoustic02.mp3',
-                        2:'sounds/kick-acoustic02.mp3',
-                        3:'sounds/snare-acoustic02.mp3',
-                        4:'sounds/cowbell-808.mp3'
+                        0:sound0,
+                        1:sound1,
+                        2:sound2,
+                        3:sound3,
+                        4:sound4
                      } 
 };
 
@@ -75,17 +82,24 @@ function resetGamestate() {
 
 resetGamestate();
 
+function setExampleTimeout(sound, time){
+    setTimeout(function(){
+        sound.play();
+        //TODO: animateBox()
+        console.log(sound);
+        console.log("playing sound");
+    }, time);
+}
+
 function playAudioExample(game) {
-    var curr;
+    var moves = game.moves;
+    var pmap = game.polygonAudioMap;
     for (var i = 0; i < game.moves.length;i++){
-        curr = game.moves;
-        var sound = new Audio(game.polygonAudioMap[curr[i].polygon]);
-        setTimeout(function(){
-            sound.play;
-            //TODO: animateBox()
-        }, curr[i].time);
+        setExampleTimeout(pmap[moves[i].polygon], moves[i].time);
     }
 }
+
+playAudioExample(game);
 
 var socket = io({"transports": ["websocket"]});
 
@@ -115,7 +129,7 @@ gUM(videoConstraints, function(localMediaStream) {
 }, errorCallback);
 
 setInterval(function() {
-    ctx.drawImage(video, 0, 0, 320, 240);
+    ctx.drawImage(video, 0, 0, 320*2, 240*2);
     var data = canvas.toDataURL('image/jpeg', 1.0);
     socket.emit("frame", dataURItoBlob(data));
 }, 230);
@@ -127,19 +141,19 @@ socket.on("sound", function(hit) {
 
     switch (soundID) {
         case 0:
-            var sound = new audio('sounds/hihat-acoustic01.mp3');
+            var sound = new audio('../sounds/hihat-acoustic01.mp3');
             break;
         case 1:
-            var sound = new Audio('sounds/tom-acoustic02.mp3');
+            var sound = new Audio('../sounds/tom-acoustic02.mp3');
             break;
         case 2:
-            var sound = new Audio('sounds/kick-acoustic02.mp3');
+            var sound = new Audio('../sounds/kick-acoustic02.mp3');
             break;
         case 3:
-            var sound = new Audio('sounds/snare-acoustic02.mp3');
+            var sound = new Audio('../sounds/snare-acoustic02.mp3');
             break;
         case 4:
-            var sound = new Audio('sounds/cowbell-808.mp3');
+            var sound = new Audio('../sounds/cowbell-808.mp3');
             break;
     }
     sound.play();
@@ -210,8 +224,9 @@ function blinkRectangle(polygon, color) {
 }
 
 //setting it and intermediate canvas to same frame size
-cw = 320;
-ch = 240;
+
+cw = 320 *2;
+ch = 240 *2;
 display.width = cw;
 display.height = ch;
 back.width = cw;
@@ -235,8 +250,7 @@ function draw(v,c,bc,w,h) {
     // keep drawing while video plays
     setTimeout(function(){ 
         draw(v,c,bc,w,h); 
-
-        for (var index in toDraw) {
+        for (var index in toDraw) { //starts at 0
             var elem = toDraw[index];
             drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
                 elem.color, c, elem.stroke);
@@ -260,7 +274,7 @@ function drawRectangle(point1, point2, point3, point4, color, ctx, stroke) {
     ctx.beginPath();
     ctx.lineWidth = stroke;
     ctx.strokeStyle = color;
-    ctx.rect(point1[0], point1[1], Math.abs(point4[0]-point1[0]), Math.abs(point1[1] - point2[1])); 
+    ctx.rect(2*point1[0], 2*point1[1], 2*Math.abs(point4[0]-point1[0]), 2*Math.abs(point1[1] - point2[1])); 
     ctx.stroke();
 }
 
