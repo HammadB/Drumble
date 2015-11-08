@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Drumble</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="vex/js/vex.combined.min.js"></script>
+    <script>vex.defaultOptions.className='vex-theme-os';</script>
+    <link rel="stylesheet" href="vex/css/vex.css" />
+    <link rel="stylesheet" href="vex/css/vex-theme-os.css" />
 </head>
 
 <body>
@@ -18,10 +21,10 @@
     </div>
 
     <div id="button-wrapper" class="btn-group-vertical"> 
-        <button type="button" class="btn btn-default">Song 1</button>
-        <button type="button" class="btn btn-default">Song 2</button>
-        <button type="button" class="btn btn-default">Song 3</button>
-        <button type="button" class="btn btn-default">Freestyle</button>
+        <button type="button" class="btn btn-default" id="1">Song 1</button>
+        <button type="button" class="btn btn-default" id="2">Song 2</button>
+        <button type="button" class="btn btn-default" id="3">Song 3</button>
+        <button type="button" class="btn btn-default" id="4">Freestyle</button>
     </div>
 
     <div id="video-wrapper">
@@ -33,6 +36,9 @@
         <canvas id="process" width="320" height="240"></canvas>
     </div>
 
+    <div id="score">
+        Score: <span id="game-state-score"></span>
+    </div>
     <!-- source -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"> </script>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>

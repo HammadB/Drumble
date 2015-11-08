@@ -48,7 +48,7 @@ ul {
 
 #button-wrapper {
     position: absolute;
-    top: 21%;
+    top: 15%;
     left: 10%;
 }
 
@@ -84,4 +84,11 @@ ul {
     max-width: 100%;
     height: 100px;
     width: 200px !important;
+}
+
+#score {
+    position: absolute;
+    top: 69%;
+    left: 13%;
+    font-size: 28px;
 }
