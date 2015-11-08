@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Drumble</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="vex/js/vex.combined.min.js"></script>
+    <script>vex.defaultOptions.className='vex-theme-os';</script>
+    <link rel="stylesheet" href="vex/css/vex.css" />
+    <link rel="stylesheet" href="vex/css/vex-theme-os.css" />
 </head>
 
 <body>
@@ -21,7 +24,7 @@
         <button type="button" class="btn btn-default">Song 1</button>
         <button type="button" class="btn btn-default">Song 2</button>
         <button type="button" class="btn btn-default">Song 3</button>
-        <button type="button" class="btn btn-default">Freestyle</button>
+        <button type="button" class="btn btn-default" id="freestyle">Freestyle</button>
     </div>
 
     <div id="video-wrapper">
