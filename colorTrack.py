@@ -29,7 +29,10 @@ def getDrumRegionPolygons(height, width, bottomPercent=.80, num=5):
     bottom = height - 1
     polygons = []
     for i in range(num):
-        polygons.append([(hzWidth*i, yStart), (hzWidth*(i+1), yStart), (hzWidth*(i+1), bottom), (hzWidth*i, bottom)]) 
+        if i == 0:
+            polygons.append([(hzWidth*i, 0), (hzWidth*(i+1), 0), (hzWidth*(i+1), (bottom- yStart)), (hzWidth*i, (bottom- yStart))]) 
+        else:
+            polygons.append([(hzWidth*i, yStart), (hzWidth*(i+1), yStart), (hzWidth*(i+1), bottom), (hzWidth*i, bottom)]) 
     return polygons
 
 def cycleContours(curr, maxC = 3):
@@ -78,6 +81,14 @@ def theBig(frame, currCountour, drawBoundingBox):
     res = cv2.bitwise_and(frame, frame, mask = mask)
     cv2.drawContours(frame, countours, -1, (0,255,0), 3)
 
+    lower_pink = np.array([140,60,60])
+    upper_pink = np.array([160, 200, 200])
+
+    countoursPink, maskPink = extractRange(hsv, lower_pink, upper_pink)
+    if len(countoursPink) >= 3:
+        countoursPink = [countoursPink[currCountour]]
+    cv2.drawContours(frame, countoursPink, -1, (255,0,255))
+
     drumRegionStart, verticals = getDrumRegion(height, width)
 
     # cv2.line(frame, (0, drumRegionStart), (width - 1, drumRegionStart), (255, 0, 0))
@@ -92,28 +103,40 @@ def theBig(frame, currCountour, drawBoundingBox):
     if drawBoundingBox and len(countours):
         cnt = countours[currCountour]
         rect = cv2.minAreaRect(cnt)
-        area = cv2.contourArea(cnt)
-        if area < .001 * (height * width):
-            print area
-            print "drop that dun da dun"
 
         pts = cv2.cv.BoxPoints(rect)
         pts = np.int0(pts)
 
-        #we got a hit
-        if isRectanglePastHzLine(pts, drumRegionStart):
-            #now find which rectangle
-            minNumPoints = None
-            hitPoly = None
-            for i, polygon in enumerate(drumRegionPolygons):
-                numPoints = 0
-                for point in pts:
-                    if point_inside_polygon(point[0], point[1], polygon):
-                        numPoints += 1
-                if not minNumPoints:
-                    hitPoly = polygon
-                    minNumPoints = numPoints
-                    hitPolyIndex = i
+        # #we got a hit
+        # if isRectanglePastHzLine(pts, drumRegionStart):
+        #     #now find which rectangle
+        #     minNumPoints = None
+        #     hitPoly = None
+        #     for i, polygon in enumerate(drumRegionPolygons):
+        #         numPoints = 0
+        #         for point in pts:
+        #             if point_inside_polygon(point[0], point[1], polygon):
+        #                 numPoints += 1
+        #         if not minNumPoints:
+        #             hitPoly = polygon
+        #             minNumPoints = numPoints
+        #             hitPolyIndex = i
+        #     polyPts = np.int0(hitPoly)
+        #     cv2.polylines(frame, [polyPts], True, (0, 0, 255), 40)
+         #now find which rectangle
+
+        minNumPoints = None
+        hitPoly = None
+        for i, polygon in enumerate(drumRegionPolygons):
+            numPoints = 0
+            for point in pts:
+                if point_inside_polygon(point[0], point[1], polygon):
+                    numPoints += 1
+            if not minNumPoints:
+                hitPoly = polygon
+                minNumPoints = numPoints
+                hitPolyIndex = i
+        if minNumPoints:
             polyPts = np.int0(hitPoly)
             cv2.polylines(frame, [polyPts], True, (0, 0, 255), 40)
 
@@ -129,10 +152,11 @@ if __name__ == "__main__":
     currCountour = 0
     drawBoundingBox = False
 
-
     while(True):
 
         _, frame = cap.read()
+
+        frame = cv2.flip(frame, 1)
 
         frame, res, hit = theBig(frame, currCountour, drawBoundingBox)
 

@@ -23,13 +23,14 @@ def handle_frame(frame_data):
     global i
     decoded = np.asarray(bytearray(frame_data), dtype='uint8')
     img = cv2.imdecode(decoded, flags=cv2.CV_LOAD_IMAGE_COLOR)
+    img = cv2.flip(img, 1)
     i +=1
     frame, res, hit = theBig(img, 0, True)
     if hit != None:
         print hit
         import random
         cv2.imwrite(str(random.random()) + ".jpg", img)
-    flask_socketio.emit('sound', 0)
+        flask_socketio.emit('sound', hit)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
