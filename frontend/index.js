@@ -181,8 +181,6 @@ socket.on("sound", function(hit) {
         game_state.last_time = new Date().getTime();
         game_state.current_pos += 1;
     }
-
-
 });
 
 ////////////////////// DISPLAY //////////////////////
@@ -301,3 +299,5 @@ $('.btn').click(function(e) {
         });
     }
 })
+
+$("#game-state-score").text(game_state.score);
