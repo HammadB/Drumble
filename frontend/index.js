@@ -158,6 +158,8 @@ socket.on("sound", function(hit) {
     }
     sound.play();
 
+    blinkRectangle(game, soundID, color);
+
     var current_move = game.moves[game_state.current_pos];
 
     if ((current_move.color == color) && (current_move.polygon = soundID)) {
