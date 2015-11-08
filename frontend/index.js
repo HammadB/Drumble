@@ -139,7 +139,7 @@ var game_data3 = {
                 },
 
                 {
-                    time: ,
+                    time: 3000,
                     color: "blue",
                     polygon: 3
                 }
@@ -156,20 +156,6 @@ var game_data3 = {
 var game = game_data;
 
 var game_state = {};
-
-document.getElementById('1').addEventListener('click', function(){
-    loadGamestate(game_data);
-    playAudioExample(game);
-});
-document.getElementById('2').addEventListener('click', function(){
-    loadGamestate(game_data2);
-    playAudioExample(game);
-});
-document.getElementById('3').addEventListener('click', function(){
-    loadGamestate(game_data3);
-    playAudioExample(game);
-});
-
 
 
 /** Resets the game. Should be called when you're starting a new game. */
@@ -195,8 +181,6 @@ function setExampleTimeout(sound, polygon){
     setTimeout(function(){
         sound.play();
         blinkRectangle(game, polygon.polygon, polygon.color);
-        console.log(sound);
-        console.log("playing sound");
     }, polygon.time);
 }
 
@@ -292,6 +276,10 @@ socket.on("sound", function(hit) {
         game_state.current_pos += 1;
     } else {
         game_state.wrong += 1;
+    }
+
+    if (gameWon()) {
+        $("#game-state-score").text(game_state.score);
     }
 
 });
@@ -402,19 +390,28 @@ $('.btn').click(function(e) {
     e.preventDefault();
     $(this).addClass('active');
     $(this).siblings().removeClass('active');
+    var buttonid = $(this).attr('id');
 
-    if ($(this).attr('id') == "freestyle") {
+    if (buttonid == "4") {
         vex.dialog.alert('Play whatever you want!');
     } else {
         vex.dialog.confirm({
           message: 'This song pattern will now play. Ready to watch carefully and repeat after me?',
           callback: function(value) {
             // value = true if the person clicked "ok"
-            
-            return console.log(value);
-          }
+            if (value) {
+                if (buttonid == 1) {
+                    loadGamestate(game_data);
+                    playAudioExample(game);
+                } else if (buttonid == 2) {
+                    loadGamestate(game_data2);
+                    playAudioExample(game);
+                } else if (buttonid == 3) {
+                    loadGamestate(game_data3);
+                    playAudioExample(game);
+                }                
+            }
+           }
         });
     }
 })
-
-$("#game-state-score").text(game_state.score);
