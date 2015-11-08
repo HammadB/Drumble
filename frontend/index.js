@@ -28,11 +28,11 @@ var sound4 = new Audio('../sounds/cowbell-808.mp3');
 
 var game = {
     polygons: [
-                 [[0, 0], [0, 64], [64, 64], [64, 0]],
-                 [[64, 192], [64, 239], [128, 239], [128, 192]],
-                 [[128, 192], [128, 239], [192, 239], [192, 192]],
-                 [[192, 192], [192, 239], [256, 239], [256, 192]],
-                 [[256, 0], [256, 64], [320, 64], [320, 0]]
+                 [[0, 0], [0, 64*2], [64*2, 64*2], [64*2, 0]],
+                 [[64*2, 192*2], [64*2, 239*2], [128*2, 239*2], [128*2, 192*2]],
+                 [[128*2, 192*2], [128*2, 239*2], [192*2, 239*2], [192*2, 192*2]],
+                 [[192*2, 192*2], [192*2, 239*2], [256*2, 239*2], [256*2, 192*2]],
+                 [[256*2, 0], [256*2, 64*2], [320*2, 64*2], [320*2, 0]]
               ],
 
     moves: [
@@ -99,7 +99,7 @@ function playAudioExample(game) {
     }
 }
 
-playAudioExample(game);
+// playAudioExample(game);
 
 var socket = io({"transports": ["websocket"]});
 
@@ -118,8 +118,8 @@ var errorCallback = function(e) {
 var videoConstraints = {
   video: {
     mandatory: {
-      minWidth: 320,
-      minHeight: 240
+      minWidth: 320*2,
+      minHeight: 240*2
     }
   }
 };
@@ -221,7 +221,7 @@ function blinkRectangle(game, id, color) {
                 polygon: polygon,
                 color: color,
                 stroke: 3,
-                time: 500
+                time: 50
             }
     );
 }
@@ -277,7 +277,7 @@ function drawRectangle(point1, point2, point3, point4, color, ctx, stroke) {
     ctx.beginPath();
     ctx.lineWidth = stroke;
     ctx.strokeStyle = color;
-    ctx.rect(2*point1[0], 2*point1[1], 2*Math.abs(point4[0]-point1[0]), 2*Math.abs(point1[1] - point2[1])); 
+    ctx.rect(point1[0], point1[1], Math.abs(point4[0]-point1[0]), Math.abs(point1[1] - point2[1])); 
     ctx.stroke();
 }
 
