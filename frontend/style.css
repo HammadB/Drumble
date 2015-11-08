@@ -48,7 +48,7 @@ ul {
 
 #button-wrapper {
     position: absolute;
-    top: 27%;
+    top: 21%;
     left: 10%;
 }
 
@@ -60,13 +60,18 @@ ul {
     display: none;
 }
 
-#live {
+#display {
     position: absolute;
     top: 15%;
-    left: 30%;
-    width: 900px;
-    height: 500px;
+    left: 39%;
+    width: 640px;
+    height: 480px;
     vertical-align: center;
+    z-index: 1;
+}
+
+#live {
+    visibility: hidden;
 }
 
 .btn-group-vertical>.btn {
