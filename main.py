@@ -26,6 +26,10 @@ def serve_js():
 def serve_style():
     return flask.send_from_directory('frontend', 'style.css')
 
+@app.route('/frontend/vex/<path:path>')
+def serve_vex(path):
+    return flask.send_from_directory('frontend/vex', path)
+
 i = 0
 @socketio.on('frame')
 def handle_frame(frame_data):

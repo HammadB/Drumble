@@ -121,7 +121,7 @@ var game_data3 = {
 
     moves: [
                 {
-                    time: 3000,
+                    time: 0000,
                     color: "purple",
                     polygon: 0
                 },
@@ -133,7 +133,7 @@ var game_data3 = {
                 },
 
                 {
-                    time: 2000,
+                    time: 1000,
                     color: "purple",
                     polygon: 2
                 },
@@ -171,16 +171,29 @@ function resetGamestate() {
 
 resetGamestate();
 
+var semaphore = game.moves.length;
 
 function loadGamestate(new_game){
     resetGamestate();
     game = new_game;
+    semaphore = game.moves.length;
 }
 
 function setExampleTimeout(sound, polygon){
     setTimeout(function(){
         sound.play();
         blinkRectangle(game, polygon.polygon, polygon.color);
+        if (semaphore == 1){
+            vex.dialog.confirm({
+              message: 'Your turn',
+              callback: function(value) {
+                semaphore--;
+                return;
+              }
+            });
+        } else {
+            semaphore--;
+        }        
     }, polygon.time);
 }
 
@@ -229,6 +242,9 @@ setInterval(function() {
 
 
 socket.on("sound", function(hit) {
+    if (semaphore > 0){
+        return;
+    }
     var timecode = new Date().getTime();
     var soundID = hit.soundID;
     var color = hit.color;
@@ -250,6 +266,7 @@ socket.on("sound", function(hit) {
             var sound = new Audio('../sounds/cowbell-808.mp3');
             break;
     }
+
     sound.play();
 
     blinkRectangle(game, flipPolygonIndexes(soundID), color);
@@ -278,14 +295,24 @@ socket.on("sound", function(hit) {
         game_state.wrong += 1;
     }
 
-    if (gameWon()) {
-        $("#game-state-score").text(game_state.score);
-    }
-
 });
 
+var woo = setInterval(function() {
+    if (gameWon()) {
+        var correct = game_state.correct;
+        var wrong = game_state.wrong;
+
+        var finalResult = (correct/(correct+wrong)*100 + "%").substring(0,4);
+
+        $("#game-state-score").text(finalResult);
+
+        vex.dialog.alert("Thats a wrap!");
+        clearInterval(woo);
+    }
+}, 1000);
+
 function gameWon(){
-    return game_state.current_pos > game.moves.length;
+    return game_state.current_pos >= game.moves.length;
 }
 
 ////////////////////// DISPLAY //////////////////////
