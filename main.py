@@ -1,0 +1,35 @@
+import flask
+import flask_socketio
+import numpy as np
+
+import cv2
+
+from colorTrack import theBig
+
+app = flask.Flask(__name__, template_folder='frontend/', static_url_path='')
+socketio = flask_socketio.SocketIO(app)
+
+@app.route('/')
+def index():
+    return flask.render_template('index.html')
+
+@app.route('/sounds/<path:path>')
+def sounds(path):
+    return flask.send_from_directory('sounds', path)
+
+i = 0
+@socketio.on('frame')
+def handle_frame(frame_data):
+    global i
+    decoded = np.asarray(bytearray(frame_data), dtype='uint8')
+    img = cv2.imdecode(decoded, flags=cv2.CV_LOAD_IMAGE_COLOR)
+    i +=1
+    frame, res, hit = theBig(img, 0, True)
+    if hit != None:
+        print hit
+        import random
+        cv2.imwrite(str(random.random()) + ".jpg", img)
+    flask_socketio.emit('sound', 0)
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True)
