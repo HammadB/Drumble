@@ -19,6 +19,13 @@ function dataURItoBlob(dataURI) {
     return new Blob([ia], {type:mimeString});
 }
 
+
+var sound0 = new Audio('../sounds/hihat-acoustic01.mp3');
+var sound1 = new Audio('../sounds/tom-acoustic02.mp3');
+var sound2 = new Audio('../sounds/kick-acoustic02.mp3');
+var sound3 = new Audio('../sounds/snare-acoustic02.mp3');
+var sound4 = new Audio('../sounds/cowbell-808.mp3');
+
 var game = {
     polygons: [
                  [[0, 0], [80, 0], [80, 80], [0, 80]],
@@ -36,29 +43,29 @@ var game = {
                 },
 
                 {
-                    time: 2000,
+                    time: 200,
                     color: "purple",
                     polygon: 4
                 },
 
                 {
-                    time: 3000,
+                    time: 300,
                     color: "blue",
                     polygon: 2
                 },
 
                 {
-                    time: 1000,
+                    time: 100,
                     color: "blue",
                     polygon: 3
                 }
           ],
     polygonAudioMap: { 
-                        0:'sounds/hihat-acoustic01.mp3',
-                        1:'sounds/tom-acoustic02.mp3',
-                        2:'sounds/kick-acoustic02.mp3',
-                        3:'sounds/snare-acoustic02.mp3',
-                        4:'sounds/cowbell-808.mp3'
+                        0:sound0,
+                        1:sound1,
+                        2:sound2,
+                        3:sound3,
+                        4:sound4
                      } 
 };
 
@@ -75,17 +82,24 @@ function resetGamestate() {
 
 resetGamestate();
 
+function setExampleTimeout(sound, time){
+    setTimeout(function(){
+        sound.play();
+        //TODO: animateBox()
+        console.log(sound);
+        console.log("playing sound");
+    }, time);
+}
+
 function playAudioExample(game) {
-    var curr;
+    var moves = game.moves;
+    var pmap = game.polygonAudioMap;
     for (var i = 0; i < game.moves.length;i++){
-        curr = game.moves;
-        var sound = new Audio(game.polygonAudioMap[curr[i].polygon]);
-        setTimeout(function(){
-            sound.play;
-            //TODO: animateBox()
-        }, curr[i].time);
+        setExampleTimeout(pmap[moves[i].polygon], moves[i].time);
     }
 }
+
+playAudioExample(game);
 
 var socket = io({"transports": ["websocket"]});
 
@@ -127,19 +141,19 @@ socket.on("sound", function(hit) {
 
     switch (soundID) {
         case 0:
-            var sound = new audio('sounds/hihat-acoustic01.mp3');
+            var sound = new audio('../sounds/hihat-acoustic01.mp3');
             break;
         case 1:
-            var sound = new Audio('sounds/tom-acoustic02.mp3');
+            var sound = new Audio('../sounds/tom-acoustic02.mp3');
             break;
         case 2:
-            var sound = new Audio('sounds/kick-acoustic02.mp3');
+            var sound = new Audio('../sounds/kick-acoustic02.mp3');
             break;
         case 3:
-            var sound = new Audio('sounds/snare-acoustic02.mp3');
+            var sound = new Audio('../sounds/snare-acoustic02.mp3');
             break;
         case 4:
-            var sound = new Audio('sounds/cowbell-808.mp3');
+            var sound = new Audio('../sounds/cowbell-808.mp3');
             break;
     }
     sound.play();
