@@ -21,10 +21,15 @@
         <button type="button" class="btn btn-default">Song 1</button>
         <button type="button" class="btn btn-default">Song 2</button>
         <button type="button" class="btn btn-default">Song 3</button>
+        <button type="button" class="btn btn-default">Freestyle</button>
     </div>
 
     <div id="video-wrapper">
+        <!-- for video capture -->
         <video id="live" autoplay></video> 
+        <!-- for display. actually seen.-->
+        <canvas id="display"></canvas>
+        <!-- for backend. never used. grabs data out of video to send to back -->
         <canvas id="process" width="320" height="240"></canvas>
     </div>
 
@@ -33,5 +38,4 @@
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="index.js"></script>
 </body>
-
 </html>
