@@ -26,7 +26,7 @@ var sound2 = new Audio('../sounds/kick-acoustic02.mp3');
 var sound3 = new Audio('../sounds/snare-acoustic02.mp3');
 var sound4 = new Audio('../sounds/cowbell-808.mp3');
 
-var game = {
+var game_data = {
     polygons: [
                  [[0, 0], [0, 64], [64, 64], [64, 0]],
                  [[64, 192], [64, 239], [128, 239], [128, 192]],
@@ -43,19 +43,103 @@ var game = {
                 },
 
                 {
-                    time: 200,
+                    time: 2000,
                     color: "purple",
                     polygon: 4
                 },
 
                 {
-                    time: 300,
+                    time: 3000,
                     color: "blue",
                     polygon: 2
                 },
 
                 {
-                    time: 100,
+                    time: 1000,
+                    color: "blue",
+                    polygon: 3
+                }
+          ],
+    polygonAudioMap: { 
+                        0:sound0,
+                        1:sound1,
+                        2:sound2,
+                        3:sound3,
+                        4:sound4
+                     } 
+};
+var game_data2 = {
+    polygons: [
+                 [[0, 0], [0, 64], [64, 64], [64, 0]],
+                 [[64, 192], [64, 239], [128, 239], [128, 192]],
+                 [[128, 192], [128, 239], [192, 239], [192, 192]],
+                 [[192, 192], [192, 239], [256, 239], [256, 192]],
+                 [[256, 0], [256, 64], [320, 64], [320, 0]]
+              ],
+
+    moves: [
+                {
+                    time: 1000,
+                    color: "blue",
+                    polygon: 0
+                },
+
+                {
+                    time: 3000,
+                    color: "purple",
+                    polygon: 4
+                },
+
+                {
+                    time: 2000,
+                    color: "purple",
+                    polygon: 2
+                },
+
+                {
+                    time: 0000,
+                    color: "blue",
+                    polygon: 3
+                }
+          ],
+    polygonAudioMap: { 
+                        0:sound0,
+                        1:sound1,
+                        2:sound2,
+                        3:sound3,
+                        4:sound4
+                     } 
+};
+var game_data3 = {
+    polygons: [
+                 [[0, 0], [0, 64], [64, 64], [64, 0]],
+                 [[64, 192], [64, 239], [128, 239], [128, 192]],
+                 [[128, 192], [128, 239], [192, 239], [192, 192]],
+                 [[192, 192], [192, 239], [256, 239], [256, 192]],
+                 [[256, 0], [256, 64], [320, 64], [320, 0]]
+              ],
+
+    moves: [
+                {
+                    time: 3000,
+                    color: "purple",
+                    polygon: 0
+                },
+
+                {
+                    time: 2000,
+                    color: "purple",
+                    polygon: 4
+                },
+
+                {
+                    time: 2000,
+                    color: "purple",
+                    polygon: 2
+                },
+
+                {
+                    time: ,
                     color: "blue",
                     polygon: 3
                 }
@@ -69,37 +153,62 @@ var game = {
                      } 
 };
 
+var game = game_data;
+
 var game_state = {};
+
+document.getElementById('1').addEventListener('click', function(){
+    loadGamestate(game_data);
+    playAudioExample(game);
+});
+document.getElementById('2').addEventListener('click', function(){
+    loadGamestate(game_data2);
+    playAudioExample(game);
+});
+document.getElementById('3').addEventListener('click', function(){
+    loadGamestate(game_data3);
+    playAudioExample(game);
+});
+
+
 
 /** Resets the game. Should be called when you're starting a new game. */
 function resetGamestate() {
     game_state = {
         last_time: 0,
         current_pos: 0,
-        score: 0
+        score: 0,
+        correct: 0,
+        wrong: 0
     };
 }
 
 resetGamestate();
 
-function setExampleTimeout(sound, time){
+
+function loadGamestate(new_game){
+    resetGamestate();
+    game = new_game;
+}
+
+function setExampleTimeout(sound, polygon){
     setTimeout(function(){
         sound.play();
-        //TODO: animateBox()
+        blinkRectangle(game, polygon.polygon, polygon.color);
         console.log(sound);
         console.log("playing sound");
-    }, time);
+    }, polygon.time);
 }
 
 function playAudioExample(game) {
     var moves = game.moves;
     var pmap = game.polygonAudioMap;
     for (var i = 0; i < game.moves.length;i++){
-        setExampleTimeout(pmap[moves[i].polygon], moves[i].time);
+        setExampleTimeout(pmap[moves[i].polygon], moves[i]); 
     }
 }
 
-// playAudioExample(game);
+playAudioExample(game);
 
 var socket = io({"transports": ["websocket"]});
 
@@ -178,10 +287,18 @@ socket.on("sound", function(hit) {
                 game_state.current_score += 100;
             }
         }
+        game_state.correct += 1;
         game_state.last_time = new Date().getTime();
         game_state.current_pos += 1;
+    } else {
+        game_state.wrong += 1;
     }
+
 });
+
+function gameWon(){
+    return game_state.current_pos > game.moves.length;
+}
 
 ////////////////////// DISPLAY //////////////////////
 var display = document.getElementById('display');
