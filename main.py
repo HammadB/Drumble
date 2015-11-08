@@ -17,6 +17,14 @@ def index():
 def sounds(path):
     return flask.send_from_directory('sounds', path)
 
+@app.route('/index.js')
+def serve_js():
+    return flask.send_from_directory('frontend', 'index.js')
+
+@app.route('/style.css')
+def serve_style():
+    return flask.send_from_directory('frontend', 'style.css')
+
 i = 0
 @socketio.on('frame')
 def handle_frame(frame_data):
@@ -31,6 +39,11 @@ def handle_frame(frame_data):
         import random
         cv2.imwrite(str(random.random()) + ".jpg", img)
         flask_socketio.emit('sound', hit)
+
+@socketio.on('new_game')
+def handle_new_game(polygons):
+    # TODO: Handle the polygons
+    print polygons
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

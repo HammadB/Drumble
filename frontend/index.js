@@ -17,9 +17,53 @@ function dataURItoBlob(dataURI) {
 
     return new Blob([ia], {type:mimeString});
 }
-        
+
+var game = {
+    polygons: [
+                 [[0, 0], [80, 0], [80, 80], [0, 80]],
+                 [[0, 320], [80, 320], [0, 240], [80, 240]],
+                 [[420, 320], [340, 320], [420, 240], [340, 240]],
+                 [[420, 0], [420, 80], [340, 0], [340, 80]],
+                 [[80, 0], [160, 0], [80, 80], [160, 80]]
+              ],
+
+    moves: [
+                {
+                    time: 0,
+                    color: "blue",
+                    polygon: 0
+                },
+
+                {
+                    time: 2000,
+                    color: "purple",
+                    polygon: 4
+                },
+
+                {
+                    time: 3000,
+                    color: "blue",
+                    polygon: 2
+                },
+
+                {
+                    time: 1000,
+                    color: "blue",
+                    polygon: 3
+                }
+          ]
+};
+
+var game_state = {
+    last_time: 0,
+    current_pos: 0,
+    score: 0
+};
+
 
 var socket = io({"transports": ["websocket"]});
+
+socket.emit("new_game", game.polygons);
 
 var gUM = Modernizr.prefixed("getUserMedia", navigator);
 var video = document.getElementById("live");
