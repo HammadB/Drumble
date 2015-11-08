@@ -157,6 +157,8 @@ var game = game_data;
 
 var game_state = {};
 
+var freestyle = false;
+
 
 /** Resets the game. Should be called when you're starting a new game. */
 function resetGamestate() {
@@ -242,7 +244,7 @@ setInterval(function() {
 
 
 socket.on("sound", function(hit) {
-    if (semaphore > 0){
+    if (semaphore > 0 and !freestyle){
         return;
     }
     var timecode = new Date().getTime();
@@ -453,6 +455,7 @@ $('.btn').click(function(e) {
 
     if (buttonid == "4") {
         vex.dialog.alert('Play whatever you want!');
+        freestyle = true;
     } else {
         vex.dialog.confirm({
           message: 'This song pattern will now play. Ready to watch carefully and repeat after me?',
@@ -462,12 +465,17 @@ $('.btn').click(function(e) {
                 if (buttonid == 1) {
                     loadGamestate(game_data);
                     playAudioExample(game);
+                    freestyle = false;
                 } else if (buttonid == 2) {
                     loadGamestate(game_data2);
                     playAudioExample(game);
+                    freestyle = false;
+
                 } else if (buttonid == 3) {
                     loadGamestate(game_data3);
                     playAudioExample(game);
+                    freestyle = false;
+
                 }                
             }
            }
