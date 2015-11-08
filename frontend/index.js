@@ -21,11 +21,11 @@ function dataURItoBlob(dataURI) {
 
 var game = {
     polygons: [
-                 [[0, 0], [80, 0], [80, 80], [0, 80]], // Points should start top-left
-                 [[0, 320], [80, 320], [0, 240], [80, 240]], // and counter-clockwise
-                 [[420, 320], [340, 320], [420, 240], [340, 240]],
-                 [[420, 0], [420, 80], [340, 0], [340, 80]],
-                 [[80, 0], [160, 0], [80, 80], [160, 80]]
+                 [[0, 0], [0, 64], [64, 64], [64, 0]],
+                 [[64, 192], [64, 239], [128, 239],[128, 192]],
+                 [[128, 192], [128, 239], [192, 239], [192, 192]],
+                 [[192, 192], [192, 239], [256, 239], [256, 192]],
+                 [[256, 0], [256, 64], [320, 64], [320, 0]]
               ],
 
     moves: [
@@ -210,8 +210,8 @@ function blinkRectangle(polygon, color) {
 }
 
 //setting it and intermediate canvas to same frame size
-cw = video.clientWidth;
-ch = video.clientHeight;
+cw = 320 *2;
+ch = 240 *2;
 display.width = cw;
 display.height = ch;
 back.width = cw;
@@ -235,10 +235,10 @@ function draw(v,c,bc,w,h) {
     // keep drawing while video plays
     setTimeout(function(){ 
         draw(v,c,bc,w,h); 
-        for (var index in toDraw) {
+        for (var index in toDraw) { //starts at 0
             var elem = toDraw[index];
             drawRectangle(elem.polygon[0], elem.polygon[1], elem.polygon[2], elem.polygon[3],
-                elem.color, elem.stroke);
+                elem.color, c, elem.stroke);
             if (elem.time == 1) {
                 toDraw.splice(index, 1);
             }
@@ -259,7 +259,7 @@ function drawRectangle(point1, point2, point3, point4, color, ctx, stroke) {
     ctx.beginPath();
     ctx.lineWidth = stroke;
     ctx.strokeStyle = color;
-    ctx.rect(point1[0], point1[1], Math.abs(point4[0]-point1[0]), Math.abs(point1[1] - point2[1])); 
+    ctx.rect(2*point1[0], 2*point1[1], 2*Math.abs(point4[0]-point1[0]), 2*Math.abs(point1[1] - point2[1])); 
     ctx.stroke();
 }
 
