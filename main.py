@@ -25,7 +25,7 @@ def handle_frame(frame_data):
     img = cv2.imdecode(decoded, flags=cv2.CV_LOAD_IMAGE_COLOR)
     img = cv2.flip(img, 1)
     i +=1
-    frame, res, hit = theBig(img, 0, True)
+    frame, res, hit, hit2 = theBig(img, 0, True)
     if hit != None:
         print hit
         import random

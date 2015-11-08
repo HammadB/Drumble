@@ -73,6 +73,7 @@ def theBig(frame, currCountour, drawBoundingBox):
     upper_blue = np.array([130, 255, 255])
 
     hitPolyIndex = None
+    pinkHitPolyIndex = None
 
     countours, mask = extractRange(hsv, lower_blue, upper_blue)
     if len(countours) >= 3:
@@ -100,30 +101,13 @@ def theBig(frame, currCountour, drawBoundingBox):
         pts = np.int0(polygon)
         cv2.polylines(frame, [pts], True, (0, 150, 0))
 
+    #blueCountours
     if drawBoundingBox and len(countours):
         cnt = countours[currCountour]
         rect = cv2.minAreaRect(cnt)
 
         pts = cv2.cv.BoxPoints(rect)
         pts = np.int0(pts)
-
-        # #we got a hit
-        # if isRectanglePastHzLine(pts, drumRegionStart):
-        #     #now find which rectangle
-        #     minNumPoints = None
-        #     hitPoly = None
-        #     for i, polygon in enumerate(drumRegionPolygons):
-        #         numPoints = 0
-        #         for point in pts:
-        #             if point_inside_polygon(point[0], point[1], polygon):
-        #                 numPoints += 1
-        #         if not minNumPoints:
-        #             hitPoly = polygon
-        #             minNumPoints = numPoints
-        #             hitPolyIndex = i
-        #     polyPts = np.int0(hitPoly)
-        #     cv2.polylines(frame, [polyPts], True, (0, 0, 255), 40)
-         #now find which rectangle
 
         minNumPoints = None
         hitPoly = None
@@ -142,7 +126,32 @@ def theBig(frame, currCountour, drawBoundingBox):
 
         cv2.polylines(frame, [pts], True, (0, 0, 255))
 
-    return frame, res, hitPolyIndex
+    #pinkCountours
+    if drawBoundingBox and len(countoursPink):
+        cnt = countoursPink[currCountour]
+        rect = cv2.minAreaRect(cnt)
+
+        pts = cv2.cv.BoxPoints(rect)
+        pts = np.int0(pts)
+
+        minNumPoints = None
+        hitPoly = None
+        for i, polygon in enumerate(drumRegionPolygons):
+            numPoints = 0
+            for point in pts:
+                if point_inside_polygon(point[0], point[1], polygon):
+                    numPoints += 1
+            if not minNumPoints:
+                hitPoly = polygon
+                minNumPoints = numPoints
+                pinkHitPolyIndex = i
+        if minNumPoints:
+            polyPts = np.int0(hitPoly)
+            cv2.polylines(frame, [polyPts], True, (255, 0, 255), 40)
+      
+        cv2.polylines(frame, [pts], True, (0, 0, 255))
+
+    return frame, res, hitPolyIndex, pinkHitPolyIndex
 
 
 
@@ -158,7 +167,7 @@ if __name__ == "__main__":
 
         frame = cv2.flip(frame, 1)
 
-        frame, res, hit = theBig(frame, currCountour, drawBoundingBox)
+        frame, res, hit, hit2 = theBig(frame, currCountour, drawBoundingBox)
 
         cv2.imshow('frame', frame)
         cv2.imshow('res', res)
