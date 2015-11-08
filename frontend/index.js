@@ -51,7 +51,14 @@ var game = {
                     color: "blue",
                     polygon: 3
                 }
-          ]
+          ],
+    polygonAudioMap: { 
+                        0:'sounds/hihat-acoustic01.mp3',
+                        1:'sounds/tom-acoustic02.mp3',
+                        2:'sounds/kick-acoustic02.mp3',
+                        3:'sounds/snare-acoustic02.mp3',
+                        4:'sounds/cowbell-808.mp3'
+                     } 
 };
 
 var game_state = {};
@@ -67,6 +74,17 @@ function resetGamestate() {
 
 resetGamestate();
 
+function playAudioExample(game) {
+    var curr;
+    for (var i = 0; i < game.moves.length;i++){
+        curr = game.moves;
+        var sound = new Audio(game.polygonAudioMap[curr[i].polygon]);
+        setTimeout(function(){
+            sound.play;
+            //TODO: animateBox()
+        }, curr[i].time);
+    }
+}
 
 var socket = io({"transports": ["websocket"]});
 
@@ -94,7 +112,7 @@ socket.on("sound", function(hit) {
 
     switch (soundID) {
         case 0:
-            var sound = new Audio('sounds/hihat-acoustic01.mp3');
+            var sound = new audio('sounds/hihat-acoustic01.mp3');
             break;
         case 1:
             var sound = new Audio('sounds/tom-acoustic02.mp3');
