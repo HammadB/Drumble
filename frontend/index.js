@@ -54,11 +54,18 @@ var game = {
           ]
 };
 
-var game_state = {
-    last_time: 0,
-    current_pos: 0,
-    score: 0
-};
+var game_state = {};
+
+/** Resets the game. Should be called when you're starting a new game. */
+function resetGamestate() {
+    game_state = {
+        last_time: 0,
+        current_pos: 0,
+        score: 0
+    };
+}
+
+resetGamestate();
 
 
 var socket = io({"transports": ["websocket"]});
