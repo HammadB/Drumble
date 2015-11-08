@@ -158,6 +158,8 @@ socket.on("sound", function(hit) {
     }
     sound.play();
 
+    blinkRectangle(game, soundID, color);
+
     var current_move = game.moves[game_state.current_pos];
 
     if ((current_move.color == color) && (current_move.polygon = soundID)) {
@@ -211,8 +213,9 @@ function setupToDraw(game) {
 
 setupToDraw(game);
 
-/** Blinks the rectangle, give it a polygon (array of four [x, y] points) and a string of color */
-function blinkRectangle(polygon, color) {
+/** Blinks the rectangle, give it an id a game, and a string of color */
+function blinkRectangle(game, id, color) {
+    var polygon = game.polygons[id];
     toDraw.push(
             {
                 polygon: polygon,
