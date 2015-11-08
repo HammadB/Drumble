@@ -402,4 +402,17 @@ $('.btn').click(function(e) {
     e.preventDefault();
     $(this).addClass('active');
     $(this).siblings().removeClass('active');
+
+    if ($(this).attr('id') == "freestyle") {
+        vex.dialog.alert('Play whatever you want!');
+    } else {
+        vex.dialog.confirm({
+          message: 'This song pattern will now play. Ready to watch carefully and repeat after me?',
+          callback: function(value) {
+            // value = true if the person clicked "ok"
+            
+            return console.log(value);
+          }
+        });
+    }
 })
